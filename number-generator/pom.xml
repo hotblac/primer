@@ -15,6 +15,8 @@
 	<description>Number generator for Primer application</description>
 
 	<properties>
+		<docker.prefix>org.dontpanic.primer</docker.prefix>
+		<docker.version>${project.version}</docker.version>
 		<java.version>11</java.version>
 		<spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
 	</properties>
@@ -81,6 +83,31 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>0.10.1</version>
+				<configuration>
+					<from>
+						<image>openjdk:11</image>
+					</from>
+					<to>
+						<image>${docker.prefix}/${project.artifactId}:${docker.version}</image>
+					</to>
+					<container>
+						<useCurrentTimestamp>true</useCurrentTimestamp>
+					</container>
+				</configuration>
+				<executions>
+					<execution>
+						<id>dockerBuild</id>
+						<phase>package</phase>
+						<goals>
+							<goal>dockerBuild</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

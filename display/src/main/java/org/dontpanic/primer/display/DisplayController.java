@@ -1,5 +1,6 @@
 package org.dontpanic.primer.display;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,8 @@ import java.util.List;
 public class DisplayController {
 
     private static final String DISPLAY_VIEW = "display";
+
+    @Autowired private NumberStreamListener streamListener;
 
     @GetMapping("/")
     public String currentPrimeCandidate(Model model) {

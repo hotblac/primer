@@ -25,4 +25,12 @@ public class PrimeCandidate {
     public void setLastPrime(int lastPrime) {
         this.lastPrime = lastPrime;
     }
+
+    @Override
+    public String toString() {
+        return "PrimeCandidate{" +
+                "currentCandidate=" + currentCandidate +
+                ", lastPrime=" + lastPrime +
+                '}';
+    }
 }

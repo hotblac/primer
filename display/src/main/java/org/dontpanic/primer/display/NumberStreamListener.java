@@ -15,9 +15,9 @@ public class NumberStreamListener {
     private Logger logger = LoggerFactory.getLogger(NumberStreamListener.class);
 
     @Bean
-    public Consumer<Flux<Integer>> accept() {
+    public Consumer<Flux<Integer>> accept(EmitterRegistry registry) {
         return flux -> flux
                 .map(n -> new PrimeCandidate(n, 0))
-                .subscribe(pc -> logger.info(pc.toString()));
+                .subscribe(pc -> registry.get().ifPresent(e -> e.next(pc)));
     }
 }

@@ -23,9 +23,9 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="result" data-th-each="candidates : ${candidates}">
-                <td>[[${candidates.currentCandidate}]]</td>
-                <td>[[${candidates.lastPrime}]]</td>
+            <tr class="result" data-th-each="candidate : ${candidates}">
+                <td>[[${candidate.currentCandidate}]]</td>
+                <td>[[${candidate.lastPrime}]]</td>
             </tr>
             </tbody>
         </table>

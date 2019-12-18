@@ -1,5 +1,7 @@
 package org.dontpanic.primer.display;
 
+import java.util.Objects;
+
 public class PrimeCandidate {
 
     private int currentCandidate;
@@ -32,5 +34,19 @@ public class PrimeCandidate {
                 "currentCandidate=" + currentCandidate +
                 ", lastPrime=" + lastPrime +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PrimeCandidate that = (PrimeCandidate) o;
+        return currentCandidate == that.currentCandidate &&
+                lastPrime == that.lastPrime;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(currentCandidate, lastPrime);
     }
 }

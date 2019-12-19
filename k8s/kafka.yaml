@@ -49,6 +49,8 @@ metadata:
     app: kafka
     component: kafka-broker
 spec:
+  # Use Expose kafka broker to host node - for debugging only
+  type: NodePort
   ports:
   - port: 9092
     name: kafka-port
@@ -57,4 +59,3 @@ spec:
   selector:
     app: kafka
     component: kafka-broker
-

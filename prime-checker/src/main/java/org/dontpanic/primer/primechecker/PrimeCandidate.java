@@ -1,4 +1,4 @@
-package org.dontpanic.primer.display;
+package org.dontpanic.primer.primechecker;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

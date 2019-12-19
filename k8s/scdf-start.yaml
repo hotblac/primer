@@ -62,11 +62,13 @@ data:
     java -jar shell.jar --dataflow.uri=http://scdf-server:80 --spring.shell.commandFile=$script_dir/scdf-init.txt
   scdf-init.txt: |
     app register --type source --name number-generator --uri docker:org.dontpanic.primer/number-generator:0.0.1-SNAPSHOT --force
+    app register --type processor --name prime-checker --uri docker:org.dontpanic.primer/prime-checker:0.0.1-SNAPSHOT --force
     app register --type sink --name display --uri docker:org.dontpanic.primer/display:0.0.1-SNAPSHOT --force
-    stream create primer --definition "number-generator | display"
+    stream create primer --definition "number-generator | prime-checker | display"
     stream deploy primer
   scdf-destroy.txt: |
     stream undeploy primer
     stream destroy primer
     app unregister --type sink --name display
+    app unregister --type processor --name prime-checker
     app unregister --type source --name number-generator

@@ -1,0 +1,72 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: scdf-start
+  labels:
+    app: scdf-start
+spec:
+  template:
+    metadata:
+      labels:
+        app: scdf-start
+    spec:
+      containers:
+      - name: scdf-start
+        image: springcloud/spring-cloud-dataflow-server:2.3.0.RELEASE
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 1.0
+            memory: 2048Mi
+          requests:
+            cpu: 0.5
+            memory: 1024Mi
+        volumeMounts:
+        - name: scdf-start-scripts
+          mountPath: /startup
+        command: ["/startup/startup.sh"]
+      restartPolicy: Never
+      volumes:
+      - name: scdf-start-scripts
+        configMap:
+          name: scdf-start-scripts
+          items:
+          - key: startup.sh
+            path: startup.sh
+            mode: 0744
+          - key: scdf-init.txt
+            path: scdf-init.txt
+            mode: 0744
+          - key: scdf-destroy.txt
+            path: scdf-destroy.txt
+            mode: 0744
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scdf-start-scripts
+  labels:
+    app: scdf-start
+data:
+  startup.sh: |
+    #!/bin/sh
+    ./wait-for-it.sh -t 0 scdf-server:80;
+    ./wait-for-it.sh -t 0 skipper:80;
+    script_dir=`dirname $0`
+    # Optionally destroy all existing flows
+    java -jar shell.jar --dataflow.uri=http://scdf-server:80 --spring.shell.commandFile=$script_dir/scdf-destroy.txt
+    java -jar shell.jar --dataflow.uri=http://scdf-server:80 --spring.shell.commandFile=$script_dir/scdf-init.txt
+  scdf-init.txt: |
+    app register --type source --name number-generator --uri docker:org.dontpanic.primer/number-generator:0.0.1-SNAPSHOT --force
+    app register --type sink --name display --uri docker:org.dontpanic.primer/display:0.0.1-SNAPSHOT --force
+    stream create primer --definition "number-generator | display"
+    stream deploy primer
+  scdf-destroy.txt: |
+    stream undeploy primer
+    stream destroy primer
+    app unregister --type sink --name display
+    app unregister --type source --name number-generator

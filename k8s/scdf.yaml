@@ -117,7 +117,7 @@ roleRef:
   name: scdf-role
   apiGroup: rbac.authorization.k8s.io
 
---- 
+---
 
 apiVersion: v1
 kind: ServiceAccount
@@ -174,4 +174,3 @@ data:
         driverClassName: org.mariadb.jdbc.Driver
         testOnBorrow: true
         validationQuery: "SELECT 1"
-

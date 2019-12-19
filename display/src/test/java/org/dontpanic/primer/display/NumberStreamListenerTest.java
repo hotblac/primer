@@ -22,7 +22,7 @@ class NumberStreamListenerTest {
 
     @Test
     void messageIsCaptured() {
-        channels.input().send(MessageBuilder.withPayload("42").build());
-        verify(fluxBuilder).add(new PrimeCandidate(42, 0));
+        channels.input().send(MessageBuilder.withPayload("{\"number\":42,\"prime\":false}").build());
+        verify(fluxBuilder).add(new PrimeCandidate(42, false));
     }
 }

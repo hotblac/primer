@@ -65,7 +65,7 @@ data:
     app register --type processor --name prime-checker --uri docker:org.dontpanic.primer/prime-checker:0.0.1-SNAPSHOT --force
     app register --type sink --name display --uri docker:org.dontpanic.primer/display:0.0.1-SNAPSHOT --force
     stream create primer --definition "number-generator | prime-checker | display"
-    stream deploy primer
+    stream deploy primer --properties "deployer.display.kubernetes.createNodePort=30000,deployer.number-generator.kubernetes.createNodePort=30001"
   scdf-destroy.txt: |
     stream undeploy primer
     stream destroy primer

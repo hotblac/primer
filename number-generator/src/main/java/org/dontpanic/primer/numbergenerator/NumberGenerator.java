@@ -10,7 +10,7 @@ public class NumberGenerator {
 
     private final NumberSender numberSender;
     private int current = 0;
-    private boolean enabled = false;
+    private boolean enabled = true;
 
     public NumberGenerator(NumberSender numberSender) {
         this.numberSender = numberSender;

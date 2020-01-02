@@ -16,9 +16,9 @@ class NumberGeneratorTest {
     @InjectMocks private NumberGenerator generator;
 
     @Test
-    void generator_isInitiallyStopped() {
+    void generator_isInitiallyStarted() {
         generator.sendNext();
-        verify(numberSender, never()).sendNumber(anyInt());
+        verify(numberSender).sendNumber(1);
     }
 
     @Test

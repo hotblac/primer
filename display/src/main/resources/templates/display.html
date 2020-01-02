@@ -11,21 +11,15 @@
         function initialize() {
             // TODO configure me
             const eventSource = new EventSource('http://192.168.0.17:30000/sse/notification');
-            eventSource.onmessage = e => {
-                const msg = e.data;
-                document.getElementById("thisNumber").innerHTML = msg;
-            };
-            eventSource.onopen = e => console.log('open');
-            eventSource.onerror = e => {
-                if (e.readyState == EventSource.CLOSED) {
-                    console.log('close');
-                } else {
-                    console.log(e);
+            eventSource.onmessage = event => {
+                const primeCandidate = JSON.parse(event.data);
+                document.getElementById("thisNumber").innerHTML = primeCandidate.number;
+                if (primeCandidate.prime) {
+                    document.getElementById("lastPrime").innerHTML = primeCandidate.number;
                 }
             };
-            eventSource.addEventListener('second', function(e) {
-                console.log('second', e.data);
-            }, false);
+            eventSource.onopen = event => console.log('open');
+            eventSource.onerror = event => console.log('error', event);
         }
         window.onload = initialize;
     </script>
@@ -41,5 +35,6 @@
     </div>
 
     <p>Latest: <span id="thisNumber"></span></p>
+    <p>Last prime: <span id="lastPrime"></span></p>
 
 </div>

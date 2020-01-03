@@ -4,33 +4,44 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link data-th-href="@{/css/bootstrap.min.css}" rel="stylesheet">
-    <link data-th-href="@{/css/main.css}" rel="stylesheet">
+    <link data-th-href="@{/css/bulma.min.css}" rel="stylesheet">
     <link data-th-href="@{/css/odometer-theme-car.css}" rel="stylesheet">
+    <link data-th-href="@{/css/main.css}" rel="stylesheet">
     <title>Primer</title>
     <script th:inline="javascript">
         window.odometerOptions = {
           duration: 500
-          ,animation: 'count'
         };
     </script>
 </head>
 
 <body>
-    <div class="container">
+    <section class="hero has-text-centered is-dark">
+        <div class="hero-body">
+            <h1 class="title">Primer</h1>
+        </div>
+    </section>
 
-        <div class="row">
-            <div id="title">
-                <h1>Primer</h1>
+    <section class="section has-background-light">
+        <div class="container has-text-centered">
+            <div class="columns is-centered">
+                <div class="column">
+                    <figure class="lastPrimeFigure">
+                        <div id="lastPrime" class="odometer"></div>
+                        <figcaption>Highest found so far</figcaption>
+                    </figure>
+                    <figure class="counterFigure">
+                        <div id="counter" class="odometer"></div>
+                        <figcaption>Checking...</figcaption>
+                    </figure>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="row">
-            <div id="counter" class="odometer"></div>
-        </div>
-        <p>Last prime: <span id="lastPrime"></span></p>
-
-    </div>
+    <footer class="footer has-text-centered has-background-light">
+        <p><a href="https://github.com/hotblac/primer">Primer @ Github</a></p>
+    </footer>
 
     <script type="text/javascript" th:src="@{/js/odometer.min.js}"></script>
     <script th:inline="javascript">

@@ -27,7 +27,8 @@
             <div class="columns is-centered">
                 <div class="column">
                     <figure class="lastPrimeFigure">
-                        <div id="lastPrime" class="odometer"></div>
+                        <p id="lastPrimePlaceholder">Working on it...</p>
+                        <div id="lastPrime" class="odometer" style="visibility:hidden"></div>
                         <figcaption>Highest found so far</figcaption>
                     </figure>
                     <figure class="counterFigure">
@@ -52,7 +53,11 @@
                 const primeCandidate = JSON.parse(event.data);
                 document.getElementById("counter").innerHTML = primeCandidate.number;
                 if (primeCandidate.prime) {
-                    document.getElementById("lastPrime").innerHTML = primeCandidate.number;
+                    const lastPrimeCounter = document.getElementById("lastPrime");
+                    const lastPrimePlaceholder = document.getElementById("lastPrimePlaceholder");
+                    lastPrimePlaceholder.style.display = 'none';
+                    lastPrimeCounter.style.visibility = 'visible';
+                    lastPrimeCounter.innerHTML = primeCandidate.number;
                 }
             };
             eventSource.onopen = event => console.log('open');

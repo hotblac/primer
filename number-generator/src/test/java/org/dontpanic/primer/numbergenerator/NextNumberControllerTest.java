@@ -9,7 +9,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,18 +18,34 @@ class NextNumberControllerTest {
 
     @Autowired private MockMvc mockMvc;
     @MockBean private NumberGenerator generator;
-    @MockBean private NumberSender sender;
 
     @Test
-    void next_sendsNextNumber() throws Exception {
-        when(generator.next()).thenReturn(42);
-        mockMvc.perform(get("/next"));
-        verify(sender).sendNumber(42);
+    void start_startsNumberGenerator() throws Exception {
+        mockMvc.perform(get("/start").param("startAt", "42"));
+        verify(generator).start(42);
     }
 
     @Test
-    void next_returnsOkResponse() throws Exception {
-        mockMvc.perform(get("/next"))
+    void start_startsAtZeroByDefault() throws Exception {
+        mockMvc.perform(get("/start"));
+        verify(generator).start(0);
+    }
+
+    @Test
+    void start_returnsOkResponse() throws Exception {
+        mockMvc.perform(get("/start"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void stop_stopsNumberGenerator() throws Exception {
+        mockMvc.perform(get("/stop"));
+        verify(generator).stop();
+    }
+
+    @Test
+    void stop_returnsOkResponse() throws Exception {
+        mockMvc.perform(get("/stop"))
                 .andExpect(status().isOk());
     }
 }

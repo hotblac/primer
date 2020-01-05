@@ -1,34 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link data-th-href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link data-th-href="@{/css/bulma.min.css}" rel="stylesheet">
+    <link data-th-href="@{/css/odometer-theme-car.css}" rel="stylesheet">
     <link data-th-href="@{/css/main.css}" rel="stylesheet">
+    <title>Primer</title>
+    <script th:inline="javascript">
+        window.odometerOptions = {
+          duration: 500
+        };
+    </script>
 </head>
+
 <body>
-
-<div class="container">
-
-    <div class="row">
-        <div id="title">
-            <h1>Primer</h1>
+    <section class="hero has-text-centered is-dark">
+        <div class="hero-body">
+            <h1 class="title">Primer</h1>
         </div>
-        <table id="allCandidates" class="table table-striped">
-            <thead>
-            <tr>
-                <th width="70%">Candidate</th>
-                <th>Last prime</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr class="result" data-th-each="candidate : ${candidates}">
-                <td>[[${candidate.number}]]</td>
-                <td>[[${candidate.prime}]]</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+    </section>
 
-</div>
+    <section class="section has-background-light">
+        <div class="container has-text-centered">
+            <div class="columns is-centered">
+                <div class="column">
+                    <figure class="lastPrimeFigure">
+                        <p id="lastPrimePlaceholder">Working on it...</p>
+                        <div id="lastPrime" class="odometer" style="visibility:hidden"></div>
+                        <figcaption>Highest found so far</figcaption>
+                    </figure>
+                    <figure class="counterFigure">
+                        <div id="counter" class="odometer"></div>
+                        <figcaption>Checking...</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer has-text-centered has-background-light">
+        <p><a href="https://github.com/hotblac/primer">Primer @ Github</a></p>
+    </footer>
+
+    <script type="text/javascript" th:src="@{/js/odometer.min.js}"></script>
+    <script th:inline="javascript">
+        function initialize() {
+            const eventSource = new EventSource('/sse/notification');
+            eventSource.onmessage = event => {
+                const primeCandidate = JSON.parse(event.data);
+                document.getElementById("counter").innerHTML = primeCandidate.number;
+                if (primeCandidate.prime) {
+                    const lastPrimeCounter = document.getElementById("lastPrime");
+                    const lastPrimePlaceholder = document.getElementById("lastPrimePlaceholder");
+                    lastPrimePlaceholder.style.display = 'none';
+                    lastPrimeCounter.style.visibility = 'visible';
+                    lastPrimeCounter.innerHTML = primeCandidate.number;
+                }
+            };
+            eventSource.onopen = event => console.log('open');
+            eventSource.onerror = event => console.log('error', event);
+        }
+        window.onload = initialize;
+    </script>
+</body>
+</html>

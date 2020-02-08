@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.dontpanic.primer</groupId>
 	<artifactId>display</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>display</name>
 	<description>Output display for Primer application</description>
 

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.dontpanic.primer</groupId>
 	<artifactId>number-generator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>number-generator</name>
 	<description>Number generator for Primer application</description>
 

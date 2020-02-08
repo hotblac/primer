@@ -21,12 +21,9 @@ spec:
         ports:
         - containerPort: 80
         resources:
-          limits:
-            cpu: 1.0
-            memory: 1024Mi
           requests:
-            cpu: 0.5
-            memory: 640Mi
+            cpu: 100m
+            memory: 512Mi
         env:
         - name: SPRING_CLOUD_KUBERNETES_CONFIG_NAME
           value: skipper
@@ -87,8 +84,8 @@ data:
                   default:
                     environmentVariables: 'SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=${KAFKA_SERVICE_HOST}:${KAFKA_SERVICE_PORT},SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES=${KAFKA_ZK_SERVICE_HOST}:${KAFKA_ZK_SERVICE_PORT}'
                     limits:
-                      memory: 1024Mi
-                      cpu: 500m
+                      memory: 512Mi
+                      cpu: 150m
                     readinessProbeDelay: 120
                     livenessProbeDelay: 90
       datasource:

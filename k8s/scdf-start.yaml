@@ -1,0 +1,71 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: scdf-start
+  labels:
+    app: scdf-start
+spec:
+  template:
+    metadata:
+      labels:
+        app: scdf-start
+    spec:
+      containers:
+      - name: scdf-start
+        image: springcloud/spring-cloud-dataflow-server:2.3.0.RELEASE
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+        volumeMounts:
+        - name: scdf-start-scripts
+          mountPath: /startup
+        command: ["/startup/startup.sh"]
+      restartPolicy: Never
+      volumes:
+      - name: scdf-start-scripts
+        configMap:
+          name: scdf-start-scripts
+          items:
+          - key: startup.sh
+            path: startup.sh
+            mode: 0744
+          - key: scdf-init.txt
+            path: scdf-init.txt
+            mode: 0744
+          - key: scdf-destroy.txt
+            path: scdf-destroy.txt
+            mode: 0744
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scdf-start-scripts
+  labels:
+    app: scdf-start
+data:
+  startup.sh: |
+    #!/bin/sh
+    ./wait-for-it.sh -t 0 scdf-server:80;
+    ./wait-for-it.sh -t 0 skipper:80;
+    script_dir=`dirname $0`
+    # Optionally destroy all existing flows
+    java -jar shell.jar --dataflow.uri=http://scdf-server:80 --spring.shell.commandFile=$script_dir/scdf-destroy.txt
+    java -jar shell.jar --dataflow.uri=http://scdf-server:80 --spring.shell.commandFile=$script_dir/scdf-init.txt
+  scdf-init.txt: |
+    app register --type source --name number-generator --uri docker:gcr.io/primer-267615/org.dontpanic.primer/number-generator:1.0.0 --force
+    app register --type processor --name prime-checker --uri docker:gcr.io/primer-267615/org.dontpanic.primer/prime-checker:1.0.0 --force
+    app register --type sink --name display --uri docker:gcr.io/primer-267615/org.dontpanic.primer/display:1.0.0 --force
+    stream create primer --definition "number-generator | prime-checker | display"
+    stream deploy primer --properties "deployer.display.kubernetes.createLoadBalancer=true"
+  scdf-destroy.txt: |
+    stream undeploy primer
+    stream destroy primer
+    app unregister --type sink --name display
+    app unregister --type processor --name prime-checker
+    app unregister --type source --name number-generator

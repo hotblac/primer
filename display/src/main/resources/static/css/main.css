@@ -1,0 +1,16 @@
+#lastPrime {
+    font-size: 64px;
+}
+#counter {
+    font-size: 24px;
+}
+#lastPrimePlaceholder {
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    margin-left: -48px;
+    top: 80px;
+}
+.lastPrimeFigure {
+    padding-bottom: 50px;
+}

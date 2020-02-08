@@ -1,0 +1,173 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scdf-server
+  labels:
+    app: scdf-server
+spec:
+  selector:
+    matchLabels:
+      app: scdf-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: scdf-server
+    spec:
+      containers:
+      - name: scdf-server
+        image: springcloud/spring-cloud-dataflow-server:2.3.0.RELEASE
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+        env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: "metadata.namespace"
+        - name: SERVER_PORT
+          value: '80'
+        - name: SPRING_CLOUD_CONFIG_ENABLED
+          value: 'false'
+        - name: SPRING_CLOUD_DATAFLOW_FEATURES_ANALYTICS_ENABLED
+          value: 'true'
+        - name: SPRING_CLOUD_DATAFLOW_FEATURES_SCHEDULES_ENABLED
+          value: 'true'
+        - name: SPRING_CLOUD_DATAFLOW_TASK_SCHEDULER_TASK_LAUNCHER_URL
+          value: 'docker://springcloud/spring-cloud-dataflow-scheduler-task-launcher:2.3.0.RELEASE'
+        - name: SPRING_CLOUD_KUBERNETES_SECRETS_ENABLE_API
+          value: 'true'
+        - name: SPRING_CLOUD_KUBERNETES_SECRETS_NAME
+          value: mysql
+        - name: SPRING_CLOUD_KUBERNETES_CONFIG_NAME
+          value: scdf-server
+        - name: SPRING_CLOUD_DATAFLOW_SERVER_URI
+          value: 'http://${SCDF_SERVER_SERVICE_HOST}:${SCDF_SERVER_SERVICE_PORT}'
+          # Provide the Skipper service location
+        - name: SPRING_CLOUD_SKIPPER_CLIENT_SERVER_URI
+          value: 'http://${SKIPPER_SERVICE_HOST}:${SKIPPER_SERVICE_PORT}/api'
+          # Add Maven repo for metadata artifact resolution for all stream apps
+        - name: SPRING_APPLICATION_JSON
+          value: "{ \"maven\": { \"local-repository\": null, \"remote-repositories\": { \"repo1\": { \"url\": \"https://repo.spring.io/libs-snapshot\"} } } }"
+      initContainers:
+      - name: init-mysql-wait
+        image: busybox
+        command: ['sh', '-c', 'until nc -w3 -z mysql 3306; do echo waiting for mysql; sleep 3; done;']
+      serviceAccountName: scdf-sa
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: scdf-server
+  labels:
+    app: scdf-server
+    spring-deployment-id: scdf
+spec:
+  # If you are running k8s on a local dev box or using minikube, you can use type NodePort instead
+  type: LoadBalancer
+  ports:
+    - port: 80
+      name: scdf-server
+  selector:
+    app: scdf-server
+
+---
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: scdf-role
+rules:
+  - apiGroups: [""]
+    resources: ["services", "pods", "replicationcontrollers", "persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "create", "delete", "update"]
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets", "pods/log"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["statefulsets", "deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "delete", "update", "patch"]
+  - apiGroups: ["extensions"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "delete", "update", "patch"]
+  - apiGroups: ["batch"]
+    resources: ["cronjobs", "jobs"]
+    verbs: ["create", "delete", "get", "list", "watch", "update", "patch"]
+
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: scdf-rb
+subjects:
+- kind: ServiceAccount
+  name: scdf-sa
+roleRef:
+  kind: Role
+  name: scdf-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: scdf-sa
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scdf-server
+  labels:
+    app: scdf-server
+data:
+  application.yaml: |-
+    spring:
+      cloud:
+        dataflow:
+          applicationProperties:
+            stream:
+              management:
+                metrics:
+                  export:
+                    prometheus:
+                      enabled: true
+                      rsocket:
+                        enabled: true
+                        host: prometheus-proxy
+                        port: 7001
+            task:
+              management:
+                metrics:
+                  export:
+                    prometheus:
+                      enabled: true
+                      rsocket:
+                        enabled: true
+                        host: prometheus-proxy
+                        port: 7001
+          grafana-info:
+            url: 'https://grafana:3000'
+          task:
+            platform:
+              kubernetes:
+                accounts:
+                  default:
+                    limits:
+                      memory: 1024Mi
+      datasource:
+        url: jdbc:mysql://${MYSQL_SERVICE_HOST}:${MYSQL_SERVICE_PORT}/mysql
+        username: root
+        password: ${mysql-root-password}
+        driverClassName: org.mariadb.jdbc.Driver
+        testOnBorrow: true
+        validationQuery: "SELECT 1"

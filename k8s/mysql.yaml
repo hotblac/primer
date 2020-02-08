@@ -23,6 +23,10 @@ spec:
               secretKeyRef:
                 key: mysql-root-password
                 name: mysql
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
         ports:
           - containerPort: 3306
             name: mysql

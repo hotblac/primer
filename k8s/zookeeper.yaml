@@ -19,6 +19,10 @@ spec:
       containers:
       - name: kafka-zk
         image: digitalwonderland/zookeeper
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
         ports:
         - containerPort: 2181
         env:
@@ -50,6 +54,3 @@ spec:
   selector:
     app: kafka-zk
     component: kafka-zk
-
-
-

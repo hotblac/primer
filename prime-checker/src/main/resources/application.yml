@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: numbers
+          group: prime-checker
+        output:
+          destination: primes
+

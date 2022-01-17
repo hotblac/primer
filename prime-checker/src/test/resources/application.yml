@@ -1,0 +1,8 @@
+# Disable real GCP integration for unit tests
+spring.cloud.gcp.pubsub.enabled: false
+
+spring:
+  cloud:
+    stream:
+      function:
+        definition: toUpperCase

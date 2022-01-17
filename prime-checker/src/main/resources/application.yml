@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    stream:
+      function:
+        # Workaround for no subscribers issue in GCP
+        definition: toUpperCase
+      bindings:
+        input:
+          destination: numbers
+        output:
+          destination: primes
+

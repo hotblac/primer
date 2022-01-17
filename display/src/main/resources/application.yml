@@ -1,8 +1,9 @@
 spring:
   cloud:
     stream:
+      function:
+        definition: toUpperCase
       bindings:
         input:
           destination: primes
-          group: display
 

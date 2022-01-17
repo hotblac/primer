@@ -1,10 +1,11 @@
 spring:
   cloud:
     stream:
+      function:
+        definition: toUpperCase
       bindings:
         input:
           destination: numbers
-          group: prime-checker
         output:
           destination: primes
 

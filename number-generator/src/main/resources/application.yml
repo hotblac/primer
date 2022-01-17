@@ -1,6 +1,8 @@
 spring:
   cloud:
     stream:
+      function:
+        definition: toUpperCase
       bindings:
         output:
           destination: numbers

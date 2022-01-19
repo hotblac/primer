@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.dontpanic.primer</groupId>
 	<artifactId>number-generator</artifactId>
-	<version>1.0.0</version>
+	<version>2.0.0</version>
 	<name>number-generator</name>
 	<description>Number generator for Primer application</description>
 
@@ -18,7 +18,7 @@
 		<docker.prefix>org.dontpanic.primer</docker.prefix>
 		<docker.version>${project.version}</docker.version>
 		<java.version>11</java.version>
-		<spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
+		<spring-cloud.version>Ilford.RELEASE</spring-cloud.version>
 	</properties>
 
 	<dependencies>
@@ -35,12 +35,8 @@
 			<artifactId>spring-cloud-stream</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka</artifactId>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>spring-cloud-gcp-pubsub-stream-binder</artifactId>
 		</dependency>
 
 		<dependency>
@@ -59,11 +55,6 @@
 			<artifactId>spring-cloud-stream-test-support</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -71,7 +62,14 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
+				<version>2020.0.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.google.cloud</groupId>
+				<artifactId>spring-cloud-gcp-dependencies</artifactId>
+				<version>3.0.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

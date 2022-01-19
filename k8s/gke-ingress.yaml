@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: primer
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: primer-ip
+  labels:
+    app: primer
+spec:
+  backend:
+    # TODO: How to select the current primer-display application
+    serviceName: primer-display-v1
+    servicePort: 8080

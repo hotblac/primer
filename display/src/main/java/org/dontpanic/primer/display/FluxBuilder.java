@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Build a Flux of given type.
@@ -15,18 +16,15 @@ import java.util.Objects;
 @Slf4j
 public class FluxBuilder<T> {
 
-    private FluxSink<T> fluxSink = null;
-    private final Flux<T> flux = Flux.create(fluxSink -> this.fluxSink = fluxSink);
+    private final List<FluxSink<T>> fluxSinks = new ArrayList<>();
 
     public void add(T item) {
         log.debug("Received item for display: {}", item);
-        if (!Objects.isNull(fluxSink)) {
-            fluxSink.next(item);
-        }
+        fluxSinks.forEach(sink -> sink.next(item));
     }
 
     public Flux<T> getFlux() {
-        return flux;
+        return Flux.create(this.fluxSinks::add);
     }
 
 }

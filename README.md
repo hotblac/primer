@@ -6,6 +6,8 @@ Primer is a SCDF streaming pipeline comprising a number generator (source), a pr
 
 The k8s directory contains the Kubernetes objects required to deploy the SCDF server and register the components.
 
+See [Spring Cloud Data Flow on Kubernetes](https://www.dontpanicblog.co.uk/2020/02/29/spring-cloud-data-flow-on-kubernetes/) for details on development and deployment to a Kubernetes environment.
+
 ## [Version 2.0.0](https://github.com/hotblac/primer/tree/2.0.0)
 Demo for Spring Cloud Stream with Google Cloud Compute Pub/Sub.
 
